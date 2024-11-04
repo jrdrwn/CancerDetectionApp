@@ -10,10 +10,15 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import com.dicoding.asclepius.R
+import com.dicoding.asclepius.data.ClassificationResult
 import com.dicoding.asclepius.databinding.ActivityMainBinding
+import com.dicoding.asclepius.helper.ImageClassifierHelper
+import org.tensorflow.lite.task.vision.classifier.Classifications
+import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageClassifierHelper: ImageClassifierHelper
 
     private var currentImageUri: Uri? = null
 
@@ -25,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.galleryButton.setOnClickListener { startGallery() }
+        binding.analyzeButton.setOnClickListener { analyzeImage() }
     }
 
     private fun startGallery() {
@@ -50,11 +56,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeImage() {
-        // TODO: Menganalisa gambar yang berhasil ditampilkan.
+        imageClassifierHelper = ImageClassifierHelper(
+            context = this,
+            classifierListener = object : ImageClassifierHelper.ClassifierListener {
+                override fun onError(error: String) {
+                    showToast(error)
+                }
+
+                override fun onResults(results: List<Classifications>?, inferenceTime: Long) {
+                    runOnUiThread {
+                        results?.let { it ->
+                            if (it.isNotEmpty() && it[0].categories.isNotEmpty()) {
+                                println(it)
+                                moveToResult(
+                                    ClassificationResult(
+                                        it[0].categories[0].label,
+                                        NumberFormat.getPercentInstance().format(it[0].categories[0].score),
+                                        currentImageUri!!
+                                    )
+                                )
+                            } else {
+                                showToast("No prediction result")
+                            }
+                        }
+                    }
+                }
+            }
+        )
+        imageClassifierHelper.classifyStaticImage(currentImageUri!!)
     }
 
-    private fun moveToResult() {
+    private fun moveToResult(result: ClassificationResult) {
         val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra(ResultActivity.EXTRA_RESULT, result)
         startActivity(intent)
     }
 
