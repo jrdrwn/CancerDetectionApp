@@ -6,4 +6,20 @@
     <string name="analyze">Analyze</string>
     <string name="result">Hasil Analisis</string>
     <string name="image_classifier_failed">Image classifier failed to initialize. See error logs for details</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_analyze">Analyze</string>
+    <string name="title_history">History</string>
+    <string name="title_news">News</string>
+    <string name="analyze_page_description">
+        Analyze an image to detect cancer using machine learning model.
+        By analyzing the image, you can find out the type of cancer that is in the image.
+    </string>
+    <string name="btn_save">Save</string>
+    <string name="nothing_data">Belum ada riwayat yang disimpan</string>
+    <string name="oops_something_went_wrong">Oops, Something went wrong!</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_image">error image</string>
 </resources>
